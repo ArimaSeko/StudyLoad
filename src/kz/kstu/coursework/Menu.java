@@ -4,6 +4,8 @@
  */
 package kz.kstu.coursework;
 
+import java.awt.Font;
+import java.sql.*;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,12 +16,14 @@ import javax.swing.*;
  * @author j3t1x
  */
 public class Menu extends javax.swing.JFrame {
- JTable table= new JTable();
-
-    /**
+ JTable table = new JTable();
+ JScrollPane scrollPane = null;
+ Connection connection = null;   
+ /**
      * Creates new form Menu
      */
     public Menu() {
+        connection = SqlConnection.Connect("sa", "310857");
         setLocation(450,150);
         initComponents();
     }
@@ -105,16 +109,30 @@ public class Menu extends javax.swing.JFrame {
         if(TablesCB.getSelectedItem().equals("Choose the table")){}
         else {
         String tableName = "select * from "+TablesCB.getSelectedItem().toString();
-        table.setVisible(true);
-        table.setBounds(50,100,400,250);
-            try {
-                table.setModel(SqlConnection.buildTableModel(SqlConnection.Connect("sa", "310857", tableName)));
+        ResultSet rs = SqlConnection.RS(tableName, connection);
+        table.setBounds(30,70,450,280);
+        table.setFont(new Font("Monserat",Font.PLAIN,13));
+            try {table.setModel(SqlConnection.buildTableModel(rs));
             } catch (SQLException ex) {
-                Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        JScrollPane scrollPane = new JScrollPane(table);
+            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);}
+        if(scrollPane!=null){}else{
+        scrollPane = new JScrollPane(table);
+        scrollPane.setBounds(30,70,450,280);
+        panel1.add(scrollPane);}
+        }
+        
+        if(ViewsCB.getSelectedItem().equals("Views")){
+        }else{
+        String query = "select * from ["+ViewsCB.getSelectedIndex()+"Report]";
+        ResultSet rs = SqlConnection.RS(query, connection);
+        table.setBounds(30,90,450,250);
+            try {table.setModel(SqlConnection.buildTableModel(rs));
+            } catch (SQLException ex) {
+            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);}
+        if(scrollPane!=null){}else{
+        scrollPane = new JScrollPane(table);
         scrollPane.setBounds(50,100,400,250);
-        panel1.add(scrollPane);
+        panel1.add(scrollPane);}
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 

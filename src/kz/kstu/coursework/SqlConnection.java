@@ -6,6 +6,8 @@ package kz.kstu.coursework;
 
 
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -13,20 +15,27 @@ import javax.swing.table.DefaultTableModel;
  * @author j3t1x
  */
 public class SqlConnection {
-    public static ResultSet Connect(String login, String password,String Query){
-        ResultSet resultSet = null;
+    public static Connection Connect(String login, String password){
+        Connection connection= null;
     try  {
-        Connection connection = DriverManager.getConnection("jdbc:sqlserver://MATEBOOK:1433;databaseName=StudyLoad;encrypt=true;trustServerCertificate=true;", login, password);
-            
-            Statement statement = connection.createStatement();
-            resultSet = statement.executeQuery(Query);
-
-        } 
-   
+        connection = DriverManager.getConnection("jdbc:sqlserver://MATEBOOK:1433;"
+                + "databaseName=StudyLoad;encrypt=true;trustServerCertificate=true;", login, password);
+        }
          catch (Exception e) {
             e.printStackTrace();
         }
-    return resultSet;
+    return connection;
+    }
+    
+    public static ResultSet RS(String query,Connection connection){
+        ResultSet rs = null;
+        try {    
+            Statement statement = connection.createStatement();
+            rs = statement.executeQuery(query);
+        } catch (SQLException ex) {
+            Logger.getLogger(SqlConnection.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return rs;
     }
     public static DefaultTableModel buildTableModel(ResultSet rs) throws SQLException {
         ResultSetMetaData metaData = rs.getMetaData();
@@ -38,6 +47,7 @@ public class SqlConnection {
         String[] columnNames = new String[columnCount];
         for (int i = 1; i <= columnCount; i++) {
             columnNames[i - 1] = metaData.getColumnName(i);
+            
         }
 
         // Создание данных таблицы
