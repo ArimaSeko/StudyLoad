@@ -24,7 +24,7 @@ public class Menu extends javax.swing.JFrame {
      */
     public Menu() {
         connection = SqlConnection.Connect("sa", "310857");
-        setLocation(450,150);
+        setLocation(400,100);
         initComponents();
     }
 
@@ -74,7 +74,7 @@ public class Menu extends javax.swing.JFrame {
                         .addComponent(ViewsCB, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(QueriesCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 38, Short.MAX_VALUE)))
+                        .addGap(0, 221, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         panel1Layout.setVerticalGroup(
@@ -85,7 +85,7 @@ public class Menu extends javax.swing.JFrame {
                     .addComponent(TablesCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ViewsCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(QueriesCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 319, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 429, Short.MAX_VALUE)
                 .addComponent(jButton1)
                 .addContainerGap())
         );
@@ -94,11 +94,15 @@ public class Menu extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -110,14 +114,14 @@ public class Menu extends javax.swing.JFrame {
         else {
         String tableName = "select * from "+TablesCB.getSelectedItem().toString();
         ResultSet rs = SqlConnection.RS(tableName, connection);
-        table.setBounds(30,70,450,280);
+        table.setBounds(30,70,550,300);
         table.setFont(new Font("Monserat",Font.PLAIN,13));
             try {table.setModel(SqlConnection.buildTableModel(rs));
             } catch (SQLException ex) {
             Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);}
         if(scrollPane!=null){}else{
         scrollPane = new JScrollPane(table);
-        scrollPane.setBounds(30,70,450,280);
+        scrollPane.setBounds(30,70,550,300);
         panel1.add(scrollPane);}
         }
         
@@ -125,13 +129,13 @@ public class Menu extends javax.swing.JFrame {
         }else{
         String query = "select * from ["+ViewsCB.getSelectedIndex()+"Report]";
         ResultSet rs = SqlConnection.RS(query, connection);
-        table.setBounds(30,90,450,250);
+        table.setBounds(30,70,550,300);
             try {table.setModel(SqlConnection.buildTableModel(rs));
             } catch (SQLException ex) {
             Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);}
         if(scrollPane!=null){}else{
         scrollPane = new JScrollPane(table);
-        scrollPane.setBounds(50,100,400,250);
+        scrollPane.setBounds(30,70,550,300);
         panel1.add(scrollPane);}
         }
     }//GEN-LAST:event_jButton1ActionPerformed
