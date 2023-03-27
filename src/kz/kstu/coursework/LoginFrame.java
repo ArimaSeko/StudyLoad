@@ -17,6 +17,7 @@ public class LoginFrame extends javax.swing.JFrame {
      * Creates new form LoginFrame
      */
     public LoginFrame() {
+        setLocation(500,200);
         initComponents();
     }
 
@@ -87,7 +88,7 @@ public class LoginFrame extends javax.swing.JFrame {
 
     private void joinBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_joinBActionPerformed
       
-      DatabaseTable.initialization("Teachers");
+      Menu.initialize();
         
     }//GEN-LAST:event_joinBActionPerformed
 
