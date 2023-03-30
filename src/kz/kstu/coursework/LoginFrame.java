@@ -87,8 +87,11 @@ public class LoginFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void joinBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_joinBActionPerformed
-      
-      Menu.initialize();
+      String login = logtb.getText();
+      String password = passtb.getText();
+      Menu menu = new Menu(login,password);
+      menu.setVisible(true);
+      hide();
         
     }//GEN-LAST:event_joinBActionPerformed
 
