@@ -13,6 +13,8 @@ import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author j3t1x
+ * //MATEBOOK:1433;"
+                + "databaseName=StudyLoad
  */
 public class SqlConnection {
     public static Connection Connect(String login, String password){
@@ -27,29 +29,51 @@ public class SqlConnection {
     return connection;
     }
     
-    public static ResultSet RS(String query,Connection connection){
+    
+    public static void sqlQuery(String query,Connection connection){
+        Statement statement=null;
+        ResultSet resultSet = null;
+        try {
+    statement = connection.createStatement();
+    resultSet = statement.executeQuery(query);
+    // Обработка результатов запроса
+} catch (SQLException ex) {
+    // Обработка ошибок
+} finally {
+    try {
+        if (resultSet != null) {
+            resultSet.close();
+        }
+    } catch (SQLException ex) {
+        // Обработка ошибок
+    }
+    try {
+        if (statement != null) {
+            statement.close();
+        }
+    } catch (SQLException ex) {
+        // Обработка ошибок
+    }}}
+    
+    
+    
+    public static DefaultTableModel buildTableModel(String query,Connection connection) throws SQLException {
         ResultSet rs = null;
+        Statement statement=null;
         try {    
-            Statement statement = connection.createStatement();
+            statement = connection.createStatement();
             rs = statement.executeQuery(query);
         } catch (SQLException ex) {
             Logger.getLogger(SqlConnection.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return rs;
-    }
-    public static DefaultTableModel buildTableModel(ResultSet rs) throws SQLException {
         ResultSetMetaData metaData = rs.getMetaData();
-
         // Получение количества столбцов
         int columnCount = metaData.getColumnCount();
-
         // Создание колонок таблицы
         String[] columnNames = new String[columnCount];
         for (int i = 1; i <= columnCount; i++) {
-            columnNames[i - 1] = metaData.getColumnName(i);
-            
+            columnNames[i - 1] = metaData.getColumnName(i);  
         }
-
         // Создание данных таблицы
         Object[][] data = new Object[0][columnCount];
         while (rs.next()) {
@@ -59,7 +83,13 @@ public class SqlConnection {
             }
             data = addRow(data, row);
         }
-
+    try {
+        if (statement != null) {
+            statement.close();
+        }
+    } catch (SQLException ex) {
+        // Обработка ошибок
+    }
         // Создание и возвращение модели таблицы
         return new DefaultTableModel(data, columnNames);
     }
