@@ -16,21 +16,20 @@ import javax.swing.table.TableModel;
  *
  * @author j3t1x
  */
-public class MenuAdming extends javax.swing.JFrame {
+public class HODMenu extends javax.swing.JFrame {
  JTable table = new JTable();
  JScrollPane scrollPane = null;
  Connection connection = null;   
  int columns = 1;
  JTextField[] textFields =null;
- JButton [] iudButtons = null;
- JTextField exectf=null;
+ JTextField exectf=null; 
  JLabel parlab = null; 
  /**
      * Creates new form Menu
      * @param login
      * @param password
      */
-    public MenuAdming(String login, String password) {
+    public HODMenu(String login, String password) {
         setTitle("Head of department menu");
         connection = SqlConnection.Connect(login, password);
         setLocation(400,100);
@@ -58,7 +57,7 @@ public class MenuAdming extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        TablesCB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Choose the table", "Departments", "Disciplines", "Groups", "Load", "PermissibleLoadTypes", "Positions", "Standard", "Teachers", "TypesOfTeachingLoad" }));
+        TablesCB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tables", "Departments", "Disciplines", "Groups", "Load", "PermissibleLoadTypes", "Positions", "Standard", "Teachers", "TypesOfTeachingLoad" }));
         TablesCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 TablesCBActionPerformed(evt);
@@ -66,6 +65,11 @@ public class MenuAdming extends javax.swing.JFrame {
         });
 
         ViewsCB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Views", "Teacher loads", "Teacher disciplines", "Teachers list" }));
+        ViewsCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ViewsCBActionPerformed(evt);
+            }
+        });
 
         ShowDataButton.setText("Show data");
         ShowDataButton.addActionListener(new java.awt.event.ActionListener() {
@@ -165,73 +169,15 @@ public class MenuAdming extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void ShowDataButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ShowDataButtonActionPerformed
-        int xx=0;
-        if(TablesCB.getSelectedItem().equals("Choose the table")!=true
-                &&ViewsCB.getSelectedItem().equals("Views")&&ProcCB.getSelectedItem().equals("Procedures")){
-        String tableName = "select * from "+TablesCB.getSelectedItem().toString();
-        table.setBounds(30,70,550,300);
-        table.setFont(new Font("Monserat",Font.PLAIN,13));
-            try {table.setModel(SqlConnection.buildTableModel(tableName,connection));
-            } catch (SQLException ex) {
-            Logger.getLogger(MenuAdming.class.getName()).log(Level.SEVERE, null, ex);}
-        if(scrollPane==null){
-        sp(table);
-        }
-        if(textFields!=null){
-        tfdel();
-        columns = table.getColumnCount();
-        textFields = new JTextField[columns];
-        for(int k = 0; k<columns; k++){
-        textFields[k]= new JTextField();
-        panel1.add(textFields[k]);
-        textFields[k].setBounds(20+xx,400,90,25);
-        xx=xx+120;}
-        panel1.validate();
-        }
-        if(textFields ==null){
-            columns = table.getColumnCount();
-        textFields = new JTextField[columns];
-        for(int k = 0; k<columns; k++){
-        textFields[k]= new JTextField();
-        panel1.add(textFields[k]);
-        textFields[k].setBounds(20+xx,400,90,25);
-        xx=xx+120;
-        ErLabel.setText("");
-        }}}else {ErLabel.setText("Choose only one table!");
-        }
+    
+       TableSetter();
         
-        if(ViewsCB.getSelectedItem().equals("Views")!=true&&TablesCB.getSelectedItem().equals("Choose the table")&&
-                ProcCB.getSelectedItem().equals("Procedures")){
-        String query = "select * from ["+ViewsCB.getSelectedIndex()+"Report]";
-        table.setBounds(30,70,550,300);
-            try {table.setModel(SqlConnection.buildTableModel(query,connection));
-            } catch (SQLException ex) {
-            Logger.getLogger(MenuAdming.class.getName()).log(Level.SEVERE, null, ex);}
-            if(textFields!=null){tfdel();}
-        if(scrollPane==null){
-        sp(table);
-        }
-        }
-        if(ProcCB.getSelectedItem().equals("Procedures")!=true&&ViewsCB.getSelectedItem().equals("Views")&&
-                TablesCB.getSelectedItem().equals("Choose the table"))
-        {
-            try {
-                String gettext = " ";
-                if(exectf!=null)gettext=exectf.getText();
-                String query="use StudyLoad exec "+ProcCB.getSelectedItem().toString()+" "+gettext;
-                System.out.println(query);
-                table.setBounds(30,70,550,300);
-                table.setModel(SqlConnection.buildTableModel(query, connection));
-                if(textFields!=null)
-        tfdel();
-                if(scrollPane==null){
-        sp(table);
-        }
-            } catch (SQLException ex) {
-                Logger.getLogger(MenuAdming.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        ViewSetter();
+      
         
+        ProcSetter();
+       
+        table.setFont(new Font("Tahoma",Font.PLAIN,13));
     }//GEN-LAST:event_ShowDataButtonActionPerformed
 
     private void InsertButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InsertButtonActionPerformed
@@ -349,15 +295,41 @@ public class MenuAdming extends javax.swing.JFrame {
             parlab=null;
                }
         }
+        if(ProcCB.getSelectedItem().equals("Procedures")!=true){
+        TablesCB.setSelectedItem(TablesCB.getItemAt(0));
+        ViewsCB.setSelectedItem(ViewsCB.getItemAt(0));
+        InsertButton.setEnabled(false);
+      DeleteButton.setEnabled(false);
+      UpdateButton.setEnabled(false);
+      }else{
+      InsertButton.setEnabled(true);
+      DeleteButton.setEnabled(true);
+      UpdateButton.setEnabled(true);
+        }
         
     }//GEN-LAST:event_ProcCBActionPerformed
 
     private void TablesCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TablesCBActionPerformed
-        if(TablesCB.getSelectedItem().toString().equals("Tables")!=true){
+        if(TablesCB.getSelectedItem().equals("Tables")!=true){
         ViewsCB.setSelectedItem(ViewsCB.getItemAt(0));
         ProcCB.setSelectedItem(ProcCB.getItemAt(0));
         }
+        TableSetter();
     }//GEN-LAST:event_TablesCBActionPerformed
+
+    private void ViewsCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ViewsCBActionPerformed
+      if(ViewsCB.getSelectedItem().equals("Views")!=true){
+      TablesCB.setSelectedItem(TablesCB.getItemAt(0));
+      ProcCB.setSelectedItem(ProcCB.getItemAt(0));
+      InsertButton.setEnabled(false);
+      DeleteButton.setEnabled(false);
+      UpdateButton.setEnabled(false);
+      }else{
+      InsertButton.setEnabled(true);
+      DeleteButton.setEnabled(true);
+      UpdateButton.setEnabled(true);}
+      ViewSetter();
+    }//GEN-LAST:event_ViewsCBActionPerformed
 
      
     public void initialize(String login, String password) {
@@ -374,14 +346,16 @@ public class MenuAdming extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MenuAdming.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HODMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MenuAdming.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HODMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MenuAdming.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HODMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MenuAdming.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HODMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
@@ -392,6 +366,9 @@ public class MenuAdming extends javax.swing.JFrame {
             }
         });
     }
+    
+    
+    
     public static boolean containsOnlyDigits(String str) {
     for (int i = 0; i < str.length(); i++) {
         if (!Character.isDigit(str.charAt(i))) {
@@ -400,17 +377,94 @@ public class MenuAdming extends javax.swing.JFrame {
     }
     return true;
 }
-public void sp(JTable table){
+
+    
+    public void sp(JTable table){
 scrollPane = new JScrollPane(table);
         scrollPane.setBounds(30,70,550,300);
         panel1.add(scrollPane);}
 
 
-public void tfdel(){
+public  void tfdel(){
 for (int i = 0; i < textFields.length; i++) {
+    if(textFields[i]!=null){
                 textFields[i].hide();
         panel1.remove(textFields[i]);
         textFields[i]=null;
+        }}
+}
+
+
+public void TableSetter(){
+int xx=0;
+        if(TablesCB.getSelectedItem().equals("Tables")!=true
+                &&ViewsCB.getSelectedItem().equals("Views")&&ProcCB.getSelectedItem().equals("Procedures")){
+        String tableName = "select * from "+TablesCB.getSelectedItem().toString();
+        table.setBounds(30,70,550,300);
+            try {table.setModel(SqlConnection.buildTableModel(tableName,connection));
+            } catch (SQLException ex) {
+            Logger.getLogger(HODMenu.class.getName()).log(Level.SEVERE, null, ex);}
+        if(scrollPane==null){
+        sp(table);
+        }
+        if(textFields!=null){
+        tfdel();
+        columns = table.getColumnCount();
+        textFields = new JTextField[columns];
+        for(int k = 0; k<columns; k++){
+        textFields[k]= new JTextField();
+        panel1.add(textFields[k]);
+        textFields[k].setBounds(20+xx,400,90,25);
+        xx=xx+120;}
+        }
+        if(textFields ==null){
+            columns = table.getColumnCount();
+        textFields = new JTextField[columns];
+        for(int k = 0; k<columns; k++){
+        textFields[k]= new JTextField();
+        panel1.add(textFields[k]);
+        textFields[k].setBounds(20+xx,400,90,25);
+        xx=xx+120;
+        ErLabel.setText("");
+        }}}
+}
+
+public void ViewSetter(){
+ if(ViewsCB.getSelectedItem().equals("Views")!=true&&TablesCB.getSelectedItem().equals("Tables")&&
+                ProcCB.getSelectedItem().equals("Procedures")){
+        String query = "select * from ["+ViewsCB.getSelectedIndex()+"Report]";
+        table.setBounds(30,70,550,300);
+            try {table.setModel(SqlConnection.buildTableModel(query,connection));
+            } catch (SQLException ex) {
+            Logger.getLogger(HODMenu.class.getName()).log(Level.SEVERE, null, ex);}
+            if(textFields!=null){tfdel();}
+        if(scrollPane==null){
+        sp(table);
+        }
+        }
+}
+
+public void ProcSetter(){
+ if(ProcCB.getSelectedItem().equals("Procedures")!=true&&ViewsCB.getSelectedItem().equals("Views")&&
+                TablesCB.getSelectedItem().equals("Tables"))
+        {
+            try {
+                String gettext = " ";
+                if(exectf!=null){gettext=exectf.getText();}
+                String query="use StudyLoad exec "+ProcCB.getSelectedItem().toString()+" "+gettext;
+                System.out.println(query);
+                table.setBounds(30,70,550,300);
+                if(gettext.equals("")!=true){table.setModel(SqlConnection.buildTableModel(query, connection));
+                ErLabel.setText("");
+                }
+                else ErLabel.setText("Введите параметр!");
+                if(textFields!=null)tfdel();
+                if(scrollPane==null){
+        sp(table);
+        }
+            } catch (SQLException ex) {
+                ErLabel.setText("Введите параметр!");
+            }
         }
 }
 

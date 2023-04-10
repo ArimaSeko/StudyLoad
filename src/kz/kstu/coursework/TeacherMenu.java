@@ -4,16 +4,32 @@
  */
 package kz.kstu.coursework;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.*;
 /**
  *
  * @author j3t1x
  */
 public class TeacherMenu extends javax.swing.JFrame {
-
-    /**
+JTextField[] textFields =null;
+JTable table = new JTable();
+ JScrollPane scrollPane = null;
+ Connection connection = null;   
+ int columns = 1;    
+/**
      * Creates new form TeacherMenu
+     * @param login
+     * @param password
      */
-    public TeacherMenu() {
+    public TeacherMenu(String login, String password) {
+        setTitle("Head of department menu");
+        connection = SqlConnection.Connect(login, password);
+        setLocation(400,100);
         initComponents();
     }
 
@@ -26,37 +42,110 @@ public class TeacherMenu extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jComboBox1 = new javax.swing.JComboBox<>();
+        panel1 = new javax.swing.JPanel();
+        ShowDataButton = new javax.swing.JButton();
+        ViewsCB = new javax.swing.JComboBox<>();
+        TablesCB = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(750, 500));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tables", "Load", "TypesOfTeachingLoad", "Disciplines" }));
+        ShowDataButton.setText("Show data");
+        ShowDataButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ShowDataButtonActionPerformed(evt);
+            }
+        });
+
+        ViewsCB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Views", "Teacher loads", "Teacher disciplines", "Teachers list" }));
+        ViewsCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ViewsCBActionPerformed(evt);
+            }
+        });
+
+        TablesCB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tables", "Load", "TypesOfTeachingLoad", "Disciplines" }));
+        TablesCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TablesCBActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
+        panel1.setLayout(panel1Layout);
+        panel1Layout.setHorizontalGroup(
+            panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(TablesCB, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(ViewsCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(454, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(ShowDataButton)
+                .addContainerGap())
+        );
+        panel1Layout.setVerticalGroup(
+            panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(TablesCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ViewsCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 443, Short.MAX_VALUE)
+                .addComponent(ShowDataButton)
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(50, 50, 50)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(562, Short.MAX_VALUE))
+            .addComponent(panel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(456, Short.MAX_VALUE))
+            .addComponent(panel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
+    private void ShowDataButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ShowDataButtonActionPerformed
+       if(TablesCB.getSelectedItem().equals("Tables")!=true
+                &&ViewsCB.getSelectedItem().equals("Views")){
+        String tableName = "select * from "+TablesCB.getSelectedItem().toString();
+        table.setBounds(30,70,550,300);
+            try {table.setModel(SqlConnection.buildTableModel(tableName,connection));
+            } catch (SQLException ex) {
+            Logger.getLogger(HODMenu.class.getName()).log(Level.SEVERE, null, ex);}
+        if(scrollPane==null){
+        sp(table);
+        }}
+        
+        if(ViewsCB.getSelectedItem().equals("Views")!=true&&
+                TablesCB.getSelectedItem().equals("Tables")){
+        String query = "select * from ["+ViewsCB.getSelectedIndex()+"Report]";
+        table.setBounds(30,70,550,300);
+            try {table.setModel(SqlConnection.buildTableModel(query,connection));
+            } catch (SQLException ex) {
+            Logger.getLogger(HODMenu.class.getName()).log(Level.SEVERE, null, ex);}
+            if(textFields!=null){tfdel();}
+        if(scrollPane==null){
+        sp(table);
+        }}
+    }//GEN-LAST:event_ShowDataButtonActionPerformed
+
+    private void TablesCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TablesCBActionPerformed
+        if(TablesCB.getSelectedItem().equals("Tables")!=true)ViewsCB.setSelectedIndex(0);
+    }//GEN-LAST:event_TablesCBActionPerformed
+
+    private void ViewsCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ViewsCBActionPerformed
+        if(ViewsCB.getSelectedItem().equals("Views")!=true)TablesCB.setSelectedIndex(0);
+    }//GEN-LAST:event_ViewsCBActionPerformed
+
+    
+    public static void initialize() {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -83,12 +172,29 @@ public class TeacherMenu extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new TeacherMenu().setVisible(true);
+                
             }
         });
     }
 
+    public void sp(JTable table){
+scrollPane = new JScrollPane(table);
+        scrollPane.setBounds(30,70,550,300);
+        panel1.add(scrollPane);}
+
+
+public void tfdel(){
+for (int i = 0; i < textFields.length; i++) {
+    if(textFields[i]!=null){
+                textFields[i].hide();
+        panel1.remove(textFields[i]);
+        textFields[i]=null;
+        }}
+}
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JButton ShowDataButton;
+    private javax.swing.JComboBox<String> TablesCB;
+    private javax.swing.JComboBox<String> ViewsCB;
+    private javax.swing.JPanel panel1;
     // End of variables declaration//GEN-END:variables
 }

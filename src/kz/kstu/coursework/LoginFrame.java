@@ -4,20 +4,26 @@
  */
 package kz.kstu.coursework;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.sql.*;
 
 /**
  *
  * @author j3t1x
  */
 public class LoginFrame extends javax.swing.JFrame {
-
+  Connection connection=null;
     /**
      * Creates new form LoginFrame
      */
     public LoginFrame() {
-        setLocation(500,200);
+       connection =  SqlConnection.Connect("Loger", "login");
+       setTitle("Login"); 
+       setLocation(500,200);
         initComponents();
     }
 
@@ -89,10 +95,25 @@ public class LoginFrame extends javax.swing.JFrame {
     private void joinBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_joinBActionPerformed
       String login = logtb.getText();
       String password = passtb.getText();
-      MenuAdming menu = new MenuAdming(login,password);
+     SqlConnection sc = new SqlConnection();
+     String type = sc.LoginIn(login, password);
+        System.out.println(type);
+        System.out.println(sc.getTCode());
+      if(type.equals("Teacher")){
+      TeacherMenu menu = new TeacherMenu("Teacher","tpass");
       menu.setVisible(true);
       hide();
-        
+      }
+      if(type.equals("HeadOfDepartment")){
+      HODMenu menu = new HODMenu("HeadOfDepartment","hpass");
+      menu.setVisible(true);
+      hide();
+      }
+      if(type.equals("Admin")){
+      AdminMenu menu = new AdminMenu("secadmin","sadmin");
+      menu.setVisible(true);
+      hide();
+      }
     }//GEN-LAST:event_joinBActionPerformed
 
     /**
@@ -124,6 +145,14 @@ public class LoginFrame extends javax.swing.JFrame {
             }
         });
     }
+
+    public Connection getConnection() {
+        return connection;
+    }
+    
+    
+
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;

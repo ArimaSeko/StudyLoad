@@ -17,6 +17,16 @@ import javax.swing.table.DefaultTableModel;
                 + "databaseName=StudyLoad
  */
 public class SqlConnection {
+    private int TCode=0;
+
+    public int getTCode() {
+        return TCode;
+    }
+
+    public void setTCode(int TCode) {
+        this.TCode = TCode;
+    }
+    
     public static Connection Connect(String login, String password){
         Connection connection= null;
     try  {
@@ -99,8 +109,45 @@ public class SqlConnection {
         Object[][] newData = new Object[data.length + 1][];
         System.arraycopy(data, 0, newData, 0, data.length);
         newData[newData.length - 1] = row;
-        return newData;
-    }
+        return newData;    }
     
+    public String LoginIn(String login, String passwd){
+        int Code = 0;
+    String aa = "";
+    Connection connection = null;
+Statement statement=null;
+        ResultSet resultSet = null;
+        try {
+    connection = Connect("Loger","login");
+    statement = connection.createStatement();
+    resultSet = statement.executeQuery("use StudyLoad exec userEnter "+login+", "+passwd);
+    while (resultSet.next()) {
+               aa = aa+resultSet.getString("TypeOfUser");
+               Code = Code + resultSet.getInt("TeacherCode");
+            }
+// Обработка результатов запроса
+} catch (SQLException ex) {
+    // Обработка ошибок
+} finally {
+            System.out.println(aa);
+    try {
+        connection.close();
+        if (resultSet != null) {
+            resultSet.close();
+        }
+    } catch (SQLException ex) {
+        // Обработка ошибок
+    }
+    try {
+        if (statement != null) {
+            statement.close();
+        }
+    } catch (SQLException ex) {
+        // Обработка ошибок
+    }}
+        System.out.println(aa);
+        setTCode(Code);
+        return aa;
+}
     
 }
