@@ -24,18 +24,27 @@ public class HODMenu extends javax.swing.JFrame {
  JTextField[] textFields =null;
  JTextField exectf=null; 
  JLabel parlab = null; 
+ Person person;
+ LoginFrame fr;
  /**
      * Creates new form Menu
      * @param login
      * @param password
+     * @param person
+     * @param fr
+     * @param UserLogin
      */
-    public HODMenu(String login, String password) {
+    public HODMenu(String login, String password,Person person,LoginFrame fr,String UserLogin) {
         setTitle("Head of department menu");
         connection = SqlConnection.Connect(login, password);
         setLocation(400,100);
         initComponents();
+        this.person = person;
+        this.fr = fr;
+        person.addAction(CurrentDateTime.getTime()+"  LogIn "+UserLogin);
     }
 
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -54,6 +63,7 @@ public class HODMenu extends javax.swing.JFrame {
         DeleteButton = new javax.swing.JButton();
         ErLabel = new javax.swing.JLabel();
         ProcCB = new javax.swing.JComboBox<>();
+        LogoutButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -109,6 +119,13 @@ public class HODMenu extends javax.swing.JFrame {
             }
         });
 
+        LogoutButton.setText("Logout");
+        LogoutButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                LogoutButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
         panel1.setLayout(panel1Layout);
         panel1Layout.setHorizontalGroup(
@@ -127,14 +144,15 @@ public class HODMenu extends javax.swing.JFrame {
                         .addGap(51, 51, 51)
                         .addComponent(DeleteButton)
                         .addGap(42, 42, 42)
-                        .addComponent(ErLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
-                        .addComponent(ShowDataButton)
-                        .addContainerGap())
+                        .addComponent(ErLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panel1Layout.createSequentialGroup()
                         .addGap(18, 18, 18)
-                        .addComponent(ProcCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(ProcCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(ShowDataButton)
+                    .addComponent(LogoutButton))
+                .addContainerGap())
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -143,7 +161,8 @@ public class HODMenu extends javax.swing.JFrame {
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(TablesCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ViewsCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ProcCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ProcCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(LogoutButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 429, Short.MAX_VALUE)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ShowDataButton)
@@ -171,13 +190,8 @@ public class HODMenu extends javax.swing.JFrame {
     private void ShowDataButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ShowDataButtonActionPerformed
     
        TableSetter();
-        
         ViewSetter();
-      
-        
         ProcSetter();
-       
-        table.setFont(new Font("Tahoma",Font.PLAIN,13));
     }//GEN-LAST:event_ShowDataButtonActionPerformed
 
     private void InsertButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InsertButtonActionPerformed
@@ -195,11 +209,11 @@ public class HODMenu extends javax.swing.JFrame {
         try{
             insertQuery = "insert into "+TablesCB.getSelectedItem().toString()+" values("+itd+")";
         SqlConnection.sqlQuery(insertQuery, connection);
+        person.addAction(insertQuery);
         }catch(Exception e){
-            System.out.println("инсерт в говне");
+            System.out.println(e);
         }
-        ErLabel.setText(itd);
-        System.out.println(insertQuery);
+        person.addAction(insertQuery);
         
     }//GEN-LAST:event_InsertButtonActionPerformed
 
@@ -243,7 +257,7 @@ public class HODMenu extends javax.swing.JFrame {
             System.out.println("didnt work deleteButton");
         }
         ErLabel.setText(itd);
-        System.out.println(insertQuery);
+        person.addAction(insertQuery);
     }//GEN-LAST:event_UpdateButtonActionPerformed
 
     private void DeleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeleteButtonActionPerformed
@@ -271,6 +285,7 @@ public class HODMenu extends javax.swing.JFrame {
         }catch(Exception e){
             System.out.println("didnt work deleteButton");
         }
+       person.addAction(deleteQuery);
     }//GEN-LAST:event_DeleteButtonActionPerformed
 
     private void ProcCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ProcCBActionPerformed
@@ -330,6 +345,13 @@ public class HODMenu extends javax.swing.JFrame {
       UpdateButton.setEnabled(true);}
       ViewSetter();
     }//GEN-LAST:event_ViewsCBActionPerformed
+
+    private void LogoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogoutButtonActionPerformed
+        fr.setVisible(true);
+        person.addAction(CurrentDateTime.getTime()+"  logOut+\n--------------------------------------------\n" );
+        person.logWrite();
+        dispose();
+    }//GEN-LAST:event_LogoutButtonActionPerformed
 
      
     public void initialize(String login, String password) {
@@ -397,9 +419,10 @@ for (int i = 0; i < textFields.length; i++) {
 
 public void TableSetter(){
 int xx=0;
+String tableName=null;
         if(TablesCB.getSelectedItem().equals("Tables")!=true
                 &&ViewsCB.getSelectedItem().equals("Views")&&ProcCB.getSelectedItem().equals("Procedures")){
-        String tableName = "select * from "+TablesCB.getSelectedItem().toString();
+         tableName = "select * from "+TablesCB.getSelectedItem().toString();
         table.setBounds(30,70,550,300);
             try {table.setModel(SqlConnection.buildTableModel(tableName,connection));
             } catch (SQLException ex) {
@@ -414,7 +437,7 @@ int xx=0;
         for(int k = 0; k<columns; k++){
         textFields[k]= new JTextField();
         panel1.add(textFields[k]);
-        textFields[k].setBounds(20+xx,400,90,25);
+        textFields[k].setBounds(20+xx,400,90,30);
         xx=xx+120;}
         }
         if(textFields ==null){
@@ -423,16 +446,19 @@ int xx=0;
         for(int k = 0; k<columns; k++){
         textFields[k]= new JTextField();
         panel1.add(textFields[k]);
-        textFields[k].setBounds(20+xx,400,90,25);
+        textFields[k].setBounds(20+xx,400,90,30);
         xx=xx+120;
         ErLabel.setText("");
         }}}
+        table.setFont(new Font("Tahoma",Font.PLAIN,13));
+        person.addAction(tableName);
 }
 
 public void ViewSetter(){
+    String query=null;
  if(ViewsCB.getSelectedItem().equals("Views")!=true&&TablesCB.getSelectedItem().equals("Tables")&&
                 ProcCB.getSelectedItem().equals("Procedures")){
-        String query = "select * from ["+ViewsCB.getSelectedIndex()+"Report]";
+        query = "select * from ["+ViewsCB.getSelectedIndex()+"Report]";
         table.setBounds(30,70,550,300);
             try {table.setModel(SqlConnection.buildTableModel(query,connection));
             } catch (SQLException ex) {
@@ -442,16 +468,18 @@ public void ViewSetter(){
         sp(table);
         }
         }
+ person.addAction(query);
 }
 
 public void ProcSetter(){
+    String query=null;
  if(ProcCB.getSelectedItem().equals("Procedures")!=true&&ViewsCB.getSelectedItem().equals("Views")&&
                 TablesCB.getSelectedItem().equals("Tables"))
         {
             try {
                 String gettext = " ";
                 if(exectf!=null){gettext=exectf.getText();}
-                String query="use StudyLoad exec "+ProcCB.getSelectedItem().toString()+" "+gettext;
+                query="use StudyLoad exec "+ProcCB.getSelectedItem().toString()+" "+gettext;
                 System.out.println(query);
                 table.setBounds(30,70,550,300);
                 if(gettext.equals("")!=true){table.setModel(SqlConnection.buildTableModel(query, connection));
@@ -466,12 +494,14 @@ public void ProcSetter(){
                 ErLabel.setText("Введите параметр!");
             }
         }
+ person.addAction(query);
 }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton DeleteButton;
     private javax.swing.JLabel ErLabel;
     private javax.swing.JButton InsertButton;
+    private javax.swing.JButton LogoutButton;
     private javax.swing.JComboBox<String> ProcCB;
     private javax.swing.JButton ShowDataButton;
     private javax.swing.JComboBox<String> TablesCB;

@@ -8,6 +8,7 @@ package kz.kstu.coursework;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -45,10 +46,14 @@ public class SqlConnection {
         ResultSet resultSet = null;
         try {
     statement = connection.createStatement();
-    resultSet = statement.executeQuery(query);
+    statement.executeUpdate(query);
     // Обработка результатов запроса
+    JOptionPane.showMessageDialog(null, "Query is succesful!",
+      "Hey!", JOptionPane.INFORMATION_MESSAGE);
 } catch (SQLException ex) {
-    // Обработка ошибок
+    JOptionPane.showMessageDialog(null, ex,
+      "Hey!", JOptionPane.ERROR_MESSAGE);
+            System.out.println(ex);
 } finally {
     try {
         if (resultSet != null) {
@@ -111,9 +116,11 @@ public class SqlConnection {
         newData[newData.length - 1] = row;
         return newData;    }
     
-    public String LoginIn(String login, String passwd){
-        int Code = 0;
-    String aa = "";
+    
+    public Person LoginIn(String login, String passwd){
+        String UserLogin="";
+        int TeacherCode = 0;
+    String TypeOfUSer = "";
     Connection connection = null;
 Statement statement=null;
         ResultSet resultSet = null;
@@ -122,14 +129,15 @@ Statement statement=null;
     statement = connection.createStatement();
     resultSet = statement.executeQuery("use StudyLoad exec userEnter "+login+", "+passwd);
     while (resultSet.next()) {
-               aa = aa+resultSet.getString("TypeOfUser");
-               Code = Code + resultSet.getInt("TeacherCode");
+               UserLogin =UserLogin + resultSet.getString("UserLogin");
+               TypeOfUSer = TypeOfUSer+resultSet.getString("TypeOfUser");
+               TeacherCode = TeacherCode + resultSet.getInt("TeacherCode");
             }
 // Обработка результатов запроса
 } catch (SQLException ex) {
     // Обработка ошибок
 } finally {
-            System.out.println(aa);
+            
     try {
         connection.close();
         if (resultSet != null) {
@@ -145,9 +153,9 @@ Statement statement=null;
     } catch (SQLException ex) {
         // Обработка ошибок
     }}
-        System.out.println(aa);
-        setTCode(Code);
-        return aa;
+        
+        
+        return new Person(UserLogin,TypeOfUSer,TeacherCode);
 }
     
 }

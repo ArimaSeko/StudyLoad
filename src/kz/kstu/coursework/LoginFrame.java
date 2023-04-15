@@ -3,12 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package kz.kstu.coursework;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.sql.*;
 
 /**
@@ -25,6 +19,7 @@ public class LoginFrame extends javax.swing.JFrame {
        setTitle("Login"); 
        setLocation(500,200);
         initComponents();
+        
     }
 
     /**
@@ -41,6 +36,7 @@ public class LoginFrame extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         joinB = new javax.swing.JButton();
+        ErLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -55,25 +51,29 @@ public class LoginFrame extends javax.swing.JFrame {
             }
         });
 
+        ErLabel.setFont(new java.awt.Font("Mongolian Baiti", 0, 14)); // NOI18N
+        ErLabel.setForeground(new java.awt.Color(255, 0, 0));
+        ErLabel.setText("                       ");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(141, 141, 141)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(joinB)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(logtb)
-                        .addComponent(passtb)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)))
+                    .addComponent(logtb)
+                    .addComponent(passtb)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
+                    .addComponent(ErLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(133, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(59, Short.MAX_VALUE)
+                .addContainerGap(58, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(logtb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -83,7 +83,9 @@ public class LoginFrame extends javax.swing.JFrame {
                 .addComponent(passtb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(29, 29, 29)
                 .addComponent(joinB)
-                .addGap(55, 55, 55))
+                .addGap(33, 33, 33)
+                .addComponent(ErLabel)
+                .addContainerGap())
         );
 
         passtb.getAccessibleContext().setAccessibleName("passtb");
@@ -93,29 +95,40 @@ public class LoginFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void joinBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_joinBActionPerformed
-      String login = logtb.getText();
+      
+        String login = logtb.getText();
       String password = passtb.getText();
      SqlConnection sc = new SqlConnection();
-     String type = sc.LoginIn(login, password);
-        System.out.println(type);
-        System.out.println(sc.getTCode());
-      if(type.equals("Teacher")){
+     Person person = sc.LoginIn(login, password);
+     try{
+      if(person.getTypeOfUser().equals("Teacher")){
       TeacherMenu menu = new TeacherMenu("Teacher","tpass");
       menu.setVisible(true);
-      hide();
+      setVisible(false);
+      connection.close();
       }
-      if(type.equals("HeadOfDepartment")){
-      HODMenu menu = new HODMenu("HeadOfDepartment","hpass");
+      if(person.getTypeOfUser().equals("HeadOfDepartment")){
+      HODMenu menu = new HODMenu("HeadOfDepartment","hpass",person,this,login);
       menu.setVisible(true);
-      hide();
+      setVisible(false);
+      connection.close();
       }
-      if(type.equals("Admin")){
+      if(person.getTypeOfUser().equals("Admin")){
       AdminMenu menu = new AdminMenu("secadmin","sadmin");
       menu.setVisible(true);
-      hide();
+      setVisible(false);
+      connection.close();
       }
+     }catch(SQLException ex){
+          ErLabel.setText("Bad enter!");
+      }
+      
     }//GEN-LAST:event_joinBActionPerformed
 
+    
+    public void back(){
+   setVisible(true);
+    }
     /**
      * @param args the command line arguments
      */
@@ -141,7 +154,8 @@ public class LoginFrame extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new LoginFrame().setVisible(true);
+                 LoginFrame fr = new LoginFrame();
+                fr.setVisible(true);
             }
         });
     }
@@ -155,6 +169,7 @@ public class LoginFrame extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel ErLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JButton joinB;

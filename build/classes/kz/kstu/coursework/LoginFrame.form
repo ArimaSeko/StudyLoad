@@ -25,14 +25,13 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="141" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="joinB" min="-2" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="logtb" max="32767" attributes="0"/>
-                      <Component id="passtb" max="32767" attributes="0"/>
-                      <Component id="jLabel1" max="32767" attributes="0"/>
-                      <Component id="jLabel2" alignment="1" pref="126" max="32767" attributes="0"/>
-                  </Group>
+                  <Component id="logtb" max="32767" attributes="0"/>
+                  <Component id="passtb" max="32767" attributes="0"/>
+                  <Component id="jLabel1" max="32767" attributes="0"/>
+                  <Component id="jLabel2" alignment="1" pref="126" max="32767" attributes="0"/>
+                  <Component id="ErLabel" alignment="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace pref="133" max="32767" attributes="0"/>
           </Group>
@@ -41,7 +40,7 @@
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
-              <EmptySpace pref="59" max="32767" attributes="0"/>
+              <EmptySpace pref="58" max="32767" attributes="0"/>
               <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="logtb" min="-2" max="-2" attributes="0"/>
@@ -51,7 +50,9 @@
               <Component id="passtb" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
               <Component id="joinB" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="55" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
+              <Component id="ErLabel" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -84,6 +85,17 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="joinBActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="ErLabel">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Mongolian Baiti" size="14" style="0"/>
+        </Property>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="0" green="0" red="ff" type="rgb"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="                       "/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>
