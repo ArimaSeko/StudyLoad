@@ -4,12 +4,19 @@
  */
 package kz.kstu.coursework;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.*;
+import javax.swing.table.TableModel;
+import static kz.kstu.coursework.HODMenu.containsOnlyDigits;
 
 /**
  *
@@ -21,13 +28,22 @@ JScrollPane scrollPane = null;
 JTable table = new JTable();
 Connection connection=null;
 int columns =1;
+JTextArea jta;
+Person person;
     /**
      * Creates new form AdminMenu
+     * @param login
+     * @param password
+     * @param person
+     * @param UserLogin
      */
-    public AdminMenu(String login,String password) {
+    public AdminMenu(String login,String password,Person person,String UserLogin) {
         connection = SqlConnection.Connect(login,password);
         setLocation(500,200);
         initComponents();
+        this.person = person;
+        person.addAction(CurrentDateTime.getTime()+"  LogIn "+UserLogin);
+         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     }
 
     /**
@@ -79,6 +95,11 @@ int columns =1;
 
         InsertButton.setText("Insert");
         InsertButton.setEnabled(false);
+        InsertButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                InsertButtonActionPerformed(evt);
+            }
+        });
 
         UpdateButton.setText("Update");
         UpdateButton.setEnabled(false);
@@ -90,6 +111,11 @@ int columns =1;
 
         DeleteButton.setText("Delete");
         DeleteButton.setEnabled(false);
+        DeleteButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DeleteButtonActionPerformed(evt);
+            }
+        });
 
         FullRB.setText("FullBackUp");
         FullRB.addActionListener(new java.awt.event.ActionListener() {
@@ -184,7 +210,7 @@ int columns =1;
         for(int k = 0; k<columns; k++){
         textFields[k]= new JTextField();
         panel1.add(textFields[k]);
-        textFields[k].setBounds(20+xx,400,90,25);
+        textFields[k].setBounds(20+xx,400,90,40);
         xx=xx+120;}
         }
         if(textFields ==null){
@@ -193,32 +219,70 @@ int columns =1;
         for(int k = 0; k<columns; k++){
         textFields[k]= new JTextField();
         panel1.add(textFields[k]);
-        textFields[k].setBounds(20+xx,400,90,25);
+        textFields[k].setBounds(20+xx,400,90,40);
         xx=xx+120;
         ErLabel.setText("");
         }}
         InsertButton.setEnabled(true);
         UpdateButton.setEnabled(true);
         DeleteButton.setEnabled(true);
+        person.addAction(tableName);
+        if(jta!=null){jta.hide();
+        panel1.remove(jta);
+        jta=null;
+        }
     }//GEN-LAST:event_UsersButtonActionPerformed
 
     private void UpdateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateButtonActionPerformed
-        // TODO add your handling code here:
+        String values = "";
+        int selectedRow = table.getSelectedRow();
+       Object value1; 
+       TableModel model = table.getModel();
+        for(int i =0;i<table.getColumnCount();i++)
+        {
+            value1 = model.getValueAt(selectedRow, i);
+            if(i==0){
+            if(containsOnlyDigits(value1.toString())){
+            values = table.getColumnName(i) +"="+ value1.toString();}
+            else{values = table.getColumnName(i) +"='"+ value1.toString()+"'";}
+            }else{
+                if(containsOnlyDigits(value1.toString()))
+                values = values+" and "+table.getColumnName(i)+"=" + value1.toString();
+                else values = values+" and "+table.getColumnName(i)+"='" + value1.toString()+"'";
+        }}
+         String insertQuery = "";
+        String itd="";
+        int columnCount = table.getColumnCount();
+        if(textFields !=null){
+        for(int i =0;i<columnCount;i++){
+            if(i==0){
+                if(containsOnlyDigits(textFields[i].getText()))
+                    itd = table.getColumnName(i)+"="+textFields[i].getText();
+            else{itd = table.getColumnName(i)+"='"+textFields[i].getText()+"'";}}
+            else
+            {if(containsOnlyDigits(textFields[i].getText()))itd = itd+", "+table.getColumnName(i)+"="+textFields[i].getText();
+            else itd=itd+", "+table.getColumnName(i)+"='"+textFields[i].getText()+"'";
+            }
+        }
+        }
+        try{
+            insertQuery = "update Users" + " set "+itd+" where "+values;
+        SqlConnection.sqlQuery(insertQuery, connection);
+        }catch(Exception e){
+            System.out.println("didnt work deleteButton");
+        }
+        ErLabel.setText(itd);
+        person.addAction(insertQuery);
     }//GEN-LAST:event_UpdateButtonActionPerformed
 
     private void AuditButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AuditButtonActionPerformed
         
-        String query = "EXEC xp_readerrorlog 0, 1, N'Failed'";
-        table.setBounds(30,70,550,300);
-            try {table.setModel(SqlConnection.buildTableModel(query,connection));
-            } catch (SQLException ex) {
-            Logger.getLogger(HODMenu.class.getName()).log(Level.SEVERE, null, ex);}
+        logWrite();
             if(textFields!=null){tfdel();}
-        if(scrollPane==null){
-        sp(table);}
         InsertButton.setEnabled(false);
         UpdateButton.setEnabled(false);
         DeleteButton.setEnabled(false);
+        person.addAction("LogOpened");
     }//GEN-LAST:event_AuditButtonActionPerformed
 
     private void BackUpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackUpButtonActionPerformed
@@ -234,6 +298,56 @@ int columns =1;
     private void TempRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TempRBActionPerformed
         FullRB.setSelected(false);
     }//GEN-LAST:event_TempRBActionPerformed
+
+    private void InsertButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InsertButtonActionPerformed
+ String insertQuery = "";
+        String itd="";
+        if(textFields !=null){
+        for(int i =0;i< textFields.length;i++){
+        if(containsOnlyDigits(textFields[i].getText()))
+        {if(i==0){
+            itd=itd+textFields[i].getText();
+            }else{
+            itd=itd+","+textFields[i].getText();}}
+        else {if(i==0){itd=itd+"'"+textFields[i].getText()+"'";}else{itd=itd+",'"+textFields[i].getText()+"'";}}}
+        }else{ErLabel.setText("Выберите таблицу!");}
+        try{
+            insertQuery = "insert into Users"+" values("+itd+")";
+        SqlConnection.sqlQuery(insertQuery, connection);
+        person.addAction(insertQuery);
+        }catch(Exception e){
+            System.out.println(e);
+        }
+        person.addAction(insertQuery);
+    }//GEN-LAST:event_InsertButtonActionPerformed
+
+    private void DeleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeleteButtonActionPerformed
+       String deleteQuery = "";
+       String values = "";
+       Object value1 = null; 
+       int selectedRow = table.getSelectedRow();
+       TableModel model = table.getModel();
+       try{
+           for(int i =0;i<table.getColumnCount();i++)
+        {
+            value1 = model.getValueAt(selectedRow, i);
+            if(i==0){
+            if(containsOnlyDigits(value1.toString())){
+            values = table.getColumnName(i) +"="+ value1.toString();}
+            else{values = table.getColumnName(i) +"='"+ value1.toString()+"'";}
+            }else{
+                if(containsOnlyDigits(value1.toString()))
+                values = values+" and "+table.getColumnName(i)+"=" + value1.toString();
+                else values = values+" and "+table.getColumnName(i)+"='" + value1.toString()+"'";
+        }}
+            deleteQuery = "delete from Users" + " where "+values;
+        SqlConnection.sqlQuery(deleteQuery, connection);
+           System.out.println(deleteQuery);
+        }catch(Exception e){
+            System.out.println("didnt work deleteButton");
+        }
+       person.addAction(deleteQuery);
+    }//GEN-LAST:event_DeleteButtonActionPerformed
 
     
     public static void init() {
@@ -280,7 +394,35 @@ for (int i = 0; i < textFields.length; i++) {
         panel1.remove(textFields[i]);
         textFields[i]=null;
         }}}
+@Override
+public void dispose() {
+    person.logWrite();
+    super.dispose();
+}
 
+
+public void logWrite(){
+    jta = new JTextArea();
+    panel1.add(jta);
+    jta.setBounds(30, 70, 600, 300);
+    String text=" ";
+    FileInputStream fos = null;
+    char[] chararay=null;
+    File file = new File("D:\\log.txt");
+    try {
+                  chararay = new char[(int)file.length()];
+                fos = new FileInputStream(file);
+                for(int i = 0;i<file.length();i++){
+                chararay[i]=(char) fos.read();
+                }
+            text =String.valueOf(chararay);
+            jta.setText(text);
+            jta.setEnabled(false);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AuditButton;

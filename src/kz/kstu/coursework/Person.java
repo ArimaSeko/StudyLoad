@@ -74,16 +74,14 @@ char[] chararay=null;
 File file = new File("D:\\log.txt");
 for(int i =0;i<actions.size();i++)if(actions.get(i)!=null)text=text+actions.get(i)+"\n";
     try {
+        text=text+CurrentDateTime.getTime()+"  logOut+\n--------------------------------------------\n";
                   chararay = text.toCharArray();
                    path = file.getPath();
                 filePath = Path.of(path);
-                fos = new FileOutputStream(file);
+                fos = new FileOutputStream(file,true);
                 for(int i = 0;i<chararay.length;i++){
                 fos.write(chararay[i]);
                 }
-            // Verify file content
-            
-  
             System.out.println(text);
         }
         catch (IOException e) {

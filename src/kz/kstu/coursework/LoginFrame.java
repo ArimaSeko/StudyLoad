@@ -101,8 +101,8 @@ public class LoginFrame extends javax.swing.JFrame {
      SqlConnection sc = new SqlConnection();
      Person person = sc.LoginIn(login, password);
      try{
-      if(person.getTypeOfUser().equals("Teacher")){
-      TeacherMenu menu = new TeacherMenu("Teacher","tpass");
+      if(person.getTypeOfUser().equals("Teacher")||person.getTypeOfUser().equals("Dean")){
+      TeacherMenu menu = new TeacherMenu("Teacher","tpass",person,login);
       menu.setVisible(true);
       setVisible(false);
       connection.close();
@@ -114,11 +114,10 @@ public class LoginFrame extends javax.swing.JFrame {
       connection.close();
       }
       if(person.getTypeOfUser().equals("Admin")){
-      AdminMenu menu = new AdminMenu("secadmin","sadmin");
+      AdminMenu menu = new AdminMenu("secadmin","sadmin",person,login);
       menu.setVisible(true);
       setVisible(false);
-      connection.close();
-      }
+      connection.close();}
      }catch(SQLException ex){
           ErLabel.setText("Bad enter!");
       }
@@ -164,10 +163,7 @@ public class LoginFrame extends javax.swing.JFrame {
         return connection;
     }
     
-    
-
-
-
+ 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel ErLabel;
     private javax.swing.JLabel jLabel1;

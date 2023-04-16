@@ -221,7 +221,7 @@ public class HODMenu extends javax.swing.JFrame {
         // TODO add your handling code here:
         String values = "";
         int selectedRow = table.getSelectedRow();
-       Object value1 = null; 
+       Object value1; 
        TableModel model = table.getModel();
         for(int i =0;i<table.getColumnCount();i++)
         {
@@ -348,7 +348,6 @@ public class HODMenu extends javax.swing.JFrame {
 
     private void LogoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogoutButtonActionPerformed
         fr.setVisible(true);
-        person.addAction(CurrentDateTime.getTime()+"  logOut+\n--------------------------------------------\n" );
         person.logWrite();
         dispose();
     }//GEN-LAST:event_LogoutButtonActionPerformed
@@ -495,6 +494,11 @@ public void ProcSetter(){
             }
         }
  person.addAction(query);
+}
+@Override
+public void dispose() {
+    person.logWrite();
+    super.dispose();
 }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
